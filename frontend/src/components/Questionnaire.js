@@ -70,14 +70,6 @@ function Questionnaire({ onComplete }) {
         return p + c + f === 100;
     };
 
-    const alertIfMacrosInvalid = () => {
-        if (!macrosSumTo100()) {
-            alert("Protein% + Carbs% + Fats% must add up to 100.");
-            return true;
-        }
-        return false;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -260,7 +252,6 @@ function Questionnaire({ onComplete }) {
                                 type="number"
                                 value={proteinPct}
                                 onChange={(e) => setProteinPct(e.target.value)}
-                                onBlur={alertIfMacrosInvalid}
                                 style={{ marginLeft: "10px", width: "60px" }}
                                 min={0}
                                 max={100}
@@ -274,7 +265,6 @@ function Questionnaire({ onComplete }) {
                                 type="number"
                                 value={carbsPct}
                                 onChange={(e) => setCarbsPct(e.target.value)}
-                                onBlur={alertIfMacrosInvalid}
                                 style={{ marginLeft: "10px", width: "60px" }}
                                 min={0}
                                 max={100}
@@ -288,7 +278,6 @@ function Questionnaire({ onComplete }) {
                                 type="number"
                                 value={fatsPct}
                                 onChange={(e) => setFatsPct(e.target.value)}
-                                onBlur={alertIfMacrosInvalid}
                                 style={{ marginLeft: "10px", width: "60px" }}
                                 min={0}
                                 max={100}

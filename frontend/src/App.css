@@ -1,3 +1,4 @@
+/*Design of entire website*/
 .App {
     text-align: center;
     font-family: Arial, sans-serif;
@@ -7,13 +8,11 @@
     position: relative;
 }
 
-/*Title, (Welcome to Nutrition Planner)*/
 h1 {
     color: #333;
     margin-bottom: 10px;
 }
 
-/*Login title*/
 h2 {
     color: #444;
     margin-top: 30px;
@@ -40,11 +39,14 @@ button {
     border-radius: 4px;
     background-color: #8d2fb3;
     color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
-/**/
 button:hover {
     background-color: #61227a;
+    transform: scale(1.05);     /* subtle pop */
+}
+button:active {
+    transform: scale(0.97);
 }
 
 /*Paragraph (track your calories...)*/
@@ -55,12 +57,154 @@ p {
 }
 
 .custom-link {
+    display: block;
+    text-align: center;
     color: #8d2fb3;
-    font-size: 18px;
     text-decoration: none;
+    margin-bottom: 0.5rem;
+    font-weight: 500;     
 }
-
 .custom-link:hover {
     text-decoration: underline;
     color: #61227a;
+}
+
+.form-container {
+    margin-top: 2rem;
+    border: 1px solid #61227a;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 2rem auto; /* auto centers horizontally */
+    background-color: #fff; /* optional, makes it pop */
+    box-shadow: 0 2px 5px #8d2fb3; /* optional subtle shadow */
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.form-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px #61227a;
+}
+
+.liked-recipe {
+    border: 1px solid #61227a; /* from old */
+    border-radius: 8px; /* from old */
+    padding: 1rem; /* from old */
+    width: 200px; /* from old */
+    background-color: #fff; /* from old */
+    box-shadow: 0 2px 5px #8d2fb3; /* from old */
+
+    display: flex; /* from old */
+    flex-direction: column; /* from old */
+    align-items: center; /* from old */
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.liked-recipe:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px #61227a;
+}
+
+.remove-like-btn {
+    margin-top: auto;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.remove-like-btn:hover {
+    background-color: #e60000;  /* darker red on hover */
+    transform: scale(1.05);     /* subtle pop */
+}
+.remove-like-btn:active {
+    transform: scale(0.97);     /* button press effect */
+}
+
+.logout-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;   /* You might later switch to flexbox/grid instead of hardcoding */
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #8d2fb3;  /* deep purple */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.logout-btn:hover {
+    background-color: #61227a;  /* darker purple on hover */
+    transform: scale(1.05);     /* subtle pop */
+}
+.logout-btn:active {
+    transform: scale(0.97);
+}
+
+.back-dashboard-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #8d2fb3; /* teal/blue */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.back-dashboard-btn:hover {
+    background-color: #61227a; /* darker on hover */
+    transform: scale(1.05);     /* subtle pop */
+}
+.back-dashboard-btn:active {
+    transform: scale(0.97);
+}
+
+.view-likes-btn {
+    position: absolute;
+    top: 1rem;
+    right: 13rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #8d2fb3; /* purple */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.view-likes-btn:hover {
+    background-color: #61227a; /* darker purple on hover */
+    transform: scale(1.05);     /* subtle pop */
+}
+.view-likes-btn:active {
+    transform: scale(0.97);
+}
+
+
+.settings-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #8d2fb3;/* green */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.settings-btn:hover {
+    background-color: #61227a; /* darker green */
+    transform: scale(1.05);     /* subtle pop */
+}
+.settings-btn:active {
+    transform: scale(0.97);
 }

@@ -1,12 +1,14 @@
 // components/RecipeDetail.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import DOMPurify from 'dompurify';
 import "../App.css"
 
 function RecipeDetail() {
     const { id } = useParams();
     const [recipe, setRecipe] = useState(null);
     const navigate = useNavigate();
+    const clean = (html) => ({ __html: DOMPurify.sanitize(html || '') });
 
     useEffect(() => {
         fetch(`http://localhost:5000/recipe/${id}`)
@@ -19,32 +21,30 @@ function RecipeDetail() {
 
     return (
         <div>
-            {/* Back button */}
             <button
-                onClick={() => navigate("/Likes")}
-                style={{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "13rem",
-                    padding: "0.5rem 1rem",
-                    cursor: "pointer"
-                }}
+                onClick={() => navigate("/likes")}
+                className="view-likes-btn"
             >
-                Back to Likes
+                View Liked Recipes
             </button>
-            {/* Back button */}
+
             <button
                 onClick={() => navigate("/dashboard")}
-                style={{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
-                    padding: "0.5rem 1rem",
-                    cursor: "pointer"
-                }}
+                className="back-dashboard-btn"
             >
                 Back to Dashboard
             </button>
+
+            <button
+                onClick={() => {
+                    localStorage.removeItem('token');
+                    window.location.href = '/';
+                }}
+                className="logout-btn"
+            >
+                Logout
+            </button>
+
             <h2>{recipe.title}</h2>
             <img src={recipe.image} alt={recipe.title} width="300" />
             <h3>Ingredients:</h3>
@@ -54,7 +54,7 @@ function RecipeDetail() {
                 ))}
             </ul>
             <h3>Instructions:</h3>
-            <p dangerouslySetInnerHTML={{ __html: recipe.instructions }} />
+            <p dangerouslySetInnerHTML={clean(recipe.instructions)} />
         </div>
     );
 }

@@ -58,18 +58,21 @@ function Likes() {
 
     return (
         <div>
-            {/* Back button */}
             <button
                 onClick={() => navigate("/dashboard")}
-                style={{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
-                    padding: "0.5rem 1rem",
-                    cursor: "pointer"
-                }}
+                className="back-dashboard-btn"
             >
                 Back to Dashboard
+            </button>
+
+            <button
+                onClick={() => {
+                    localStorage.removeItem('token');
+                    window.location.href = '/';
+                }}
+                className="logout-btn"
+            >
+                Logout
             </button>
 
             <h1>Welcome, {userData.username}!</h1>
@@ -82,46 +85,22 @@ function Likes() {
             ) : (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "1rem", justifyContent: "center" }}>
                     {liked_recipes.map((recipe, index) => (
-                        <div key={index} style={{
-                            border: "1px solid #ddd",
-                            borderRadius: "8px",
-                            padding: "1rem",
-                            width: "200px",
-                            backgroundColor: "#fff",
-                            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center"
-                        }}>
+
+                        <div key={index} className="liked-recipe">
+                        
                         <img
                             src={recipe.image}
                             alt={recipe.title}
                             style={{ width: "100%", borderRadius: "4px", marginBottom: "0.5rem" }}
                         />
-                        <Link
-                            to={`/recipe/${recipe.id}`}
-                            className="custom-link"
-                            style={{
-                                textAlign: "center",
-                                color: "#4B0082",
-                                textDecoration: "none",
-                                marginBottom: "0.5rem"
-                            }}
-                        >
+
+                        <Link to={`/recipe/${recipe.id}`} className="custom-link">
                             {recipe.title}
                         </Link>
+
                         <button
                             onClick={() => handleUnlike(recipe.id)}
-                            style={{
-                                marginTop: "auto",
-                                padding: "0.3rem 0.6rem",
-                                fontSize: "0.9rem",
-                                backgroundColor: "#ff4d4d",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer"
-                            }}
+                            className="remove-like-btn"
                         >
                             Remove Like
                         </button>

@@ -12,7 +12,7 @@ function Dashboard() {
         //Get user Data
         const token = localStorage.getItem("token");
         if (!token) {
-            console.error("No token found");
+            navigate("/");
             return;
         }
 
@@ -21,7 +21,15 @@ function Dashboard() {
                 Authorization: `Bearer ${token}`
             }
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status !== 200) {
+                    // Token invalid/expired → clear and go to login
+                    localStorage.removeItem("token");
+                    navigate("/");
+                    throw new Error("Unauthorized");
+                }
+                return res.json();
+            })
             .then((data) => {
                 setUserData(data);
             })
@@ -91,28 +99,26 @@ function Dashboard() {
         <div>
             <button 
                 onClick={() => navigate("/questionnaire")}
-                style = {{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
-                    padding: "0.5rem 1rem",
-                    cursor: "pointer"
-                }}
+                className="settings-btn"
             >
                 Change User Settings
             </button>
 
             <button
                 onClick={() => navigate("/likes")}
-                style={{
-                position: "absolute",
-                top: "1rem",
-                right: "13rem",
-                padding: "0.5rem 1rem",
-                cursor: "pointer"
-                }}
+                className="view-likes-btn"
             >
                 View Liked Recipes
+            </button>
+
+            <button
+                onClick={() => {
+                    localStorage.removeItem('token');
+                    window.location.href = '/';
+                }}
+                className="logout-btn"
+            >
+                Logout
             </button>
 
             <h1>Welcome, {userData.username}!</h1>
@@ -131,7 +137,7 @@ function Dashboard() {
             
             {/* Recipe Card */}
             {recipe && (
-                <div style={{ marginTop: "2rem", border: "1px solid #ccc", padding: "20px", borderRadius: "10px", maxWidth: "400px", margin: "auto" }}>
+                <div className="form-container">
                     <h2>{recipe.title}</h2>
                     <img src={recipe.image} alt={recipe.title} style={{ width: "100%", borderRadius: "10px" }} />
                     <p>Calories: {recipe.calories}</p>
