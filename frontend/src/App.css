@@ -4,6 +4,7 @@
     padding: 50px;
     background-color: #f7f9fc;
     min-height: 100vh;
+    position: relative;
 }
 
 /*Title, (Welcome to Nutrition Planner)*/
@@ -51,4 +52,15 @@ p {
     margin-top: 0px;
     font-size: 14px;
     margin-bottom: 30px;
+}
+
+.custom-link {
+    color: #8d2fb3;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.custom-link:hover {
+    text-decoration: underline;
+    color: #61227a;
 }

@@ -4,6 +4,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Questionnaire from './components/Questionnaire';
+import RecipeDetail from './components/RecipeDetail';
+import Likes from './components/Likes';
 import "./App.css"
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/questionnaire" element={<Questionnaire />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/likes" element={<Likes />} />
         </Routes>
       </div>
     </Router>

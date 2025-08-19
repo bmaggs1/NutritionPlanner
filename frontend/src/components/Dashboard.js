@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import "../App.css"
+
 
 function Dashboard() {
     const navigate = useNavigate();
-
     const [userData, setUserData] = useState(null);
-    const [response, SetResponse] = useState(null)
+    const [recipe, setRecipe] = useState(null);
 
     useEffect(() => {
+        //Get user Data
         const token = localStorage.getItem("token");
-
         if (!token) {
             console.error("No token found");
             return;
@@ -22,50 +23,142 @@ function Dashboard() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log("Fetched data:", data);
                 setUserData(data);
-        })
-        .catch((err) => console.error("Fetch error:", err));
+            })
+            .catch((err) => console.error("Fetch error:", err));
+
+        getOneRecipe();
     }, []);
 
-    if (!userData) return <p>Loading user data...</p>;
-
-
-    const handleGenerateClick = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-        const res = await fetch("http://localhost:5000/api/generate", {
+    const getOneRecipe = async () => {
+        const token = localStorage.getItem("token");
+        fetch("http://localhost:5000/api/generateRecipe", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("Fetched data:", data[0]);
+                setRecipe(data[0]);
+            })
+            .catch((err) => console.error("Error fetching recipe:", err));
+    };
 
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+    if (!userData || !userData.userData) return <p>Loading user data...</p>;
+
+    const handleLike = async () => {
+        const token = localStorage.getItem("token");
+
+        try {
+            const res = await fetch("http://localhost:5000/api/likeRecipe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    id: recipe.id,
+                    title: recipe.title,
+                    image: recipe.image
+                })
+            });
+
+            const data = await res.json();
+            console.log(data.message); // "Recipe liked!"
+        } catch (err) {
+            console.error("Error liking recipe:", err);
         }
+        getOneRecipe();
+    };
 
-        const newData = await res.json();
-        SetResponse(newData);
-    } catch (err) {
-        console.error("Error fetching generated data:", err);
-    }
-};
+    const handleSkip = () => {
+        getOneRecipe();
+    };
+
+    // Extract nutrition info
+    const {
+        calculated_calories,
+        nutrition_goal,
+        protein,
+        protien_percentage,
+        carbs,
+        carbs_percentage,
+        fats,
+        fat_percentage
+    } = userData.userData;
 
     return (
-    <div>
-        <h1>Welcome, {userData.username}!</h1>
-        <p><button onClick={() => navigate("/questionnaire")}>Change User Settings</button></p>
-        <button onClick={handleGenerateClick}>Generate Recipes</button>
+        <div>
+            <button 
+                onClick={() => navigate("/questionnaire")}
+                style = {{
+                    position: "absolute",
+                    top: "1rem",
+                    right: "1rem",
+                    padding: "0.5rem 1rem",
+                    cursor: "pointer"
+                }}
+            >
+                Change User Settings
+            </button>
 
-        {response && (
-            <div style={{ marginTop: "20px" }}>
-                <h2>{response.test}</h2>
-            </div>
-        )}
-    </div>
-);
+            <button
+                onClick={() => navigate("/likes")}
+                style={{
+                position: "absolute",
+                top: "1rem",
+                right: "13rem",
+                padding: "0.5rem 1rem",
+                cursor: "pointer"
+                }}
+            >
+                View Liked Recipes
+            </button>
+
+            <h1>Welcome, {userData.username}!</h1>
+            <p>
+                Your current nutrition is set to <strong>{Number(calculated_calories).toFixed(0)} calories</strong> per day
+                to reach your goal of <strong>{getGoalText(nutrition_goal)}</strong>.
+            </p>
+            <p>
+                This consists of:
+                <strong>
+                {" "}{protien_percentage}% protein ({protein.toFixed(0)}g),
+                {" "}{carbs_percentage}% carbs ({carbs.toFixed(0)}g),
+                {" and "}{fat_percentage}% fats ({fats.toFixed(0)}g)
+                </strong>
+            </p>
+            
+            {/* Recipe Card */}
+            {recipe && (
+                <div style={{ marginTop: "2rem", border: "1px solid #ccc", padding: "20px", borderRadius: "10px", maxWidth: "400px", margin: "auto" }}>
+                    <h2>{recipe.title}</h2>
+                    <img src={recipe.image} alt={recipe.title} style={{ width: "100%", borderRadius: "10px" }} />
+                    <p>Calories: {recipe.calories}</p>
+                    <p>Protein: {recipe.protein}</p>
+                    <p>Carbs: {recipe.carbs}</p>
+                    <p>Fat: {recipe.fat}</p>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+                        <button onClick={handleLike}>👍 Like</button>
+                        <button onClick={handleSkip}>👎 Skip</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Helper function to display goal text
+function getGoalText(goalNumber) {
+    const goals = {
+        1: "losing 1 lb/week",
+        2: "losing 0.5 lb/week",
+        3: "maintaining weight",
+        4: "gaining 0.5 lb/week",
+        5: "gaining 1 lb/week"
+    };
+    return goals[goalNumber] || "an unknown goal";
 }
 
 export default Dashboard;
