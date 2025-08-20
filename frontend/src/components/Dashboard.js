@@ -1,9 +1,115 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import { useNavigate} from 'react-router-dom';
 import "../App.css"
 
 
 function Dashboard() {
+    //Tinder Card stuff
+    const SWIPE_X_THRESHOLD = 120;
+    const [dragging, setDragging] = useState(false);
+    const [dx, setDx] = useState(0);
+    const [dy, setDy] = useState(0);
+    const startRef = useRef({ x: 0, y: 0 });
+    const [isFlipped, setIsFlipped] = useState(false);
+    const justSwipedRef = useRef(false);
+
+    function lerpColor(c1, c2, t) {
+        // c1, c2 are hex strings like "#rrggbb", t is 0..1
+        const r1 = parseInt(c1.slice(1, 3), 16);
+        const g1 = parseInt(c1.slice(3, 5), 16);
+        const b1 = parseInt(c1.slice(5, 7), 16);
+
+        const r2 = parseInt(c2.slice(1, 3), 16);
+        const g2 = parseInt(c2.slice(3, 5), 16);
+        const b2 = parseInt(c2.slice(5, 7), 16);
+
+        const r = Math.round(r1 + (r2 - r1) * t);
+        const g = Math.round(g1 + (g2 - g1) * t);
+        const b = Math.round(b1 + (b2 - b1) * t);
+
+        return `rgb(${r},${g},${b})`;
+    }
+
+    const progress = Math.min(Math.abs(dx) / SWIPE_X_THRESHOLD, 1);
+
+    let bgColor = "#ffffff";
+    if (dx > 0) {
+        bgColor = lerpColor("#ffffff", "#9fffb5ff", progress);
+    } else if (dx < 0) {
+        bgColor = lerpColor("#ffffff", "#ff969fff", progress);
+    }
+
+
+    const toggleFlip = () => {
+        if (dragging || justSwipedRef.current) return;
+        setIsFlipped(f => !f);
+    };
+    const onKeyToggle = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleFlip();
+        }
+    };
+
+    const onPointerDown = (e) => {
+        // support mouse & touch
+        const point = e.touches ? e.touches[0] : e;
+        startRef.current = { x: point.clientX, y: point.clientY };
+        setDragging(true);
+        // prevent image dragging/text selection during drag
+        document.body.classList.add('no-select');
+
+        // capture pointer for consistent events (mouse)
+        if (e.target.setPointerCapture) {
+            e.target.setPointerCapture(e.pointerId || 1);
+        }
+    };
+
+    const onPointerMove = (e) => {
+        if (!dragging) return;
+        const point = e.touches ? e.touches[0] : e;
+        setDx(point.clientX - startRef.current.x);
+        setDy(point.clientY - startRef.current.y);
+    };
+
+    const endDragWithSwipe = () => {
+        setDragging(false);
+        document.body.classList.remove('no-select');
+
+        let didSwipe = false;
+
+        // decide based on horizontal distance
+        if (dx > SWIPE_X_THRESHOLD) {
+            didSwipe = true;
+            handleLike();
+        } else if (dx < -SWIPE_X_THRESHOLD) {
+            didSwipe = true;
+            handleSkip();
+        }
+
+        if (didSwipe) {
+            justSwipedRef.current = true;
+        }
+
+        // snap back to center after alert
+        setDx(0);
+        setDy(0);
+        setTimeout(() => {
+            justSwipedRef.current = false;
+        }, 0);
+        
+    };
+
+    const onPointerUp = endDragWithSwipe;
+    const onPointerCancel = endDragWithSwipe;
+
+
+    //END TINDER CARD STUFF
+
+
+
+
+
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
     const [recipe, setRecipe] = useState(null);
@@ -49,6 +155,7 @@ function Dashboard() {
                 setRecipe(data[0]);
             })
             .catch((err) => console.error("Error fetching recipe:", err));
+        setIsFlipped(false);
     };
 
     if (!userData || !userData.userData) return <p>Loading user data...</p>;
@@ -134,18 +241,48 @@ function Dashboard() {
             </p>
             
             {recipe && (
-                <div className="form-container">
-                    <h2>{recipe.title}</h2>
-                    <img className="recipe-img" src={recipe.image} alt={recipe.title} />
+                <div
+                    className={`form-container swipe-card flip-card ${dragging ? 'dragging' : ''} ${isFlipped ? 'flipped' : ''}`}
+                    style={{
+                        transform: `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`,
+                        backgroundColor: bgColor
+                    }}
+                    onMouseDown={onPointerDown}
+                    onMouseMove={onPointerMove}
+                    onMouseUp={onPointerUp}
+                    onMouseLeave={dragging ? onPointerUp : undefined}
+                    onTouchStart={onPointerDown}
+                    onTouchMove={onPointerMove}
+                    onTouchEnd={onPointerUp}
+                    onTouchCancel={onPointerCancel}
 
-                    <p>Calories: {recipe.calories}</p>
-                    <p>Protein: {recipe.protein}</p>
-                    <p>Carbs: {recipe.carbs}</p>
-                    <p>Fat: {recipe.fat}</p>
+                    // flip on click / keyboard
+                    onClick={toggleFlip}
+                    tabIndex={0}
+                    role="button"
+                    aria-pressed={isFlipped}
+                    onKeyDown={onKeyToggle}
+                >
+                    <div className="flip-card-inner">
+                        {/* FRONT: title + image only */}
+                        <div className="flip-card-front">
+                            <h2 className="center">{recipe.title}</h2>
+                            <img
+                                className="recipe-img"
+                                src={recipe.image}
+                                alt={recipe.title}
+                                draggable={false}
+                            />
+                        </div>
 
-                    <div className="recipe-actions">
-                        <button onClick={handleLike}>👍 Like</button>
-                        <button onClick={handleSkip}>👎 Skip</button>
+                        {/* BACK: details (calories/macros + buttons) */}
+                        <div className="flip-card-back">
+                            <h3 className="center" style={{ marginTop: 0 }}>Nutrition</h3>
+                            <p>Calories: {recipe.calories}</p>
+                            <p>Protein: {recipe.protein}</p>
+                            <p>Carbs: {recipe.carbs}</p>
+                            <p>Fat: {recipe.fat}</p>
+                        </div>
                     </div>
                 </div>
             )}

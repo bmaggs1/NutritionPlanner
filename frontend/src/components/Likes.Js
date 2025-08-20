@@ -86,26 +86,26 @@ function Likes() {
                     {liked_recipes.map((recipe, index) => (
 
                         <div key={index} className="liked-recipe">
-                        
-                        <img
-                            src={recipe.image}
-                            alt={recipe.title}
-                            style={{ width: "100%", borderRadius: "4px", marginBottom: "0.5rem" }}
-                        />
+                            {/* Make the WHOLE card a link */}
+                            <Link to={`/recipe/${recipe.id}`} className="card-link">
+                                <img
+                                    src={recipe.image}
+                                    alt={recipe.title}
+                                    style={{ width: "100%", borderRadius: "4px", marginBottom: "0.5rem" }}
+                                />
+                                <h3 style={{ color: "#61227a", margin: 0 }}>{recipe.title}</h3>
+                            </Link>
 
-                        <Link to={`/recipe/${recipe.id}`} className="custom-link">
-                            {recipe.title}
-                        </Link>
-
-                        <button
-                            onClick={() => handleUnlike(recipe.id)}
-                            className="remove-like-btn"
-                        >
-                            Remove Like
-                        </button>
-                    </div>
-                ))}
-            </div>
+                            {/* Button remains outside the link so clicks don’t navigate */}
+                            <button
+                                onClick={() => handleUnlike(recipe.id)}
+                                className="remove-like-btn"
+                            >
+                                Remove Like
+                            </button>
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     );
