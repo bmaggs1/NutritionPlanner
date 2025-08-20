@@ -47,9 +47,8 @@ function Questionnaire({ onComplete }) {
                     setActivityLevel(data.userData.activity_level?.toString() || "1");
                     setNutritionGoal(data.userData.nutrition_goal?.toString() || "3");
 
-                    // keep your existing backend field names
                     setProteinPct(
-                        (data.userData.protien_percentage ?? 30).toString()
+                        (data.userData.protein_percentage ?? 30).toString()
                     );
                     setCarbsPct(
                         (data.userData.carbs_percentage ?? 50).toString()
@@ -62,7 +61,6 @@ function Questionnaire({ onComplete }) {
             .catch(err => console.error("Fetch error:", err));
     }, []);
 
-    // Helper: check macros add to 100 (run onBlur and on submit)
     const macrosSumTo100 = () => {
         const p = Number(proteinPct) || 0;
         const c = Number(carbsPct) || 0;
@@ -136,7 +134,7 @@ function Questionnaire({ onComplete }) {
             nutrition_goal: goal,
             calculated_calories: goalCalories.toFixed(2),
             protein: protein_g,
-            protien_percentage: pPct,   // 👈 keep original key
+            protein_percentage: pPct,   // 👈 keep original key
             carbs: carbs_g,
             carbs_percentage: cPct,
             fats: fats_g,

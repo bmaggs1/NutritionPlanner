@@ -23,7 +23,6 @@ function Dashboard() {
         })
             .then((res) => {
                 if (res.status !== 200) {
-                    // Token invalid/expired → clear and go to login
                     localStorage.removeItem("token");
                     navigate("/");
                     throw new Error("Unauthorized");
@@ -83,12 +82,11 @@ function Dashboard() {
         getOneRecipe();
     };
 
-    // Extract nutrition info
     const {
         calculated_calories,
         nutrition_goal,
         protein,
-        protien_percentage,
+        protein_percentage,
         carbs,
         carbs_percentage,
         fats,
@@ -129,23 +127,23 @@ function Dashboard() {
             <p>
                 This consists of:
                 <strong>
-                {" "}{protien_percentage}% protein ({protein.toFixed(0)}g),
+                {" "}{protein_percentage}% protein ({protein.toFixed(0)}g),
                 {" "}{carbs_percentage}% carbs ({carbs.toFixed(0)}g),
                 {" and "}{fat_percentage}% fats ({fats.toFixed(0)}g)
                 </strong>
             </p>
             
-            {/* Recipe Card */}
             {recipe && (
                 <div className="form-container">
                     <h2>{recipe.title}</h2>
-                    <img src={recipe.image} alt={recipe.title} style={{ width: "100%", borderRadius: "10px" }} />
+                    <img className="recipe-img" src={recipe.image} alt={recipe.title} />
+
                     <p>Calories: {recipe.calories}</p>
                     <p>Protein: {recipe.protein}</p>
                     <p>Carbs: {recipe.carbs}</p>
                     <p>Fat: {recipe.fat}</p>
 
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+                    <div className="recipe-actions">
                         <button onClick={handleLike}>👍 Like</button>
                         <button onClick={handleSkip}>👎 Skip</button>
                     </div>
@@ -155,7 +153,6 @@ function Dashboard() {
     );
 }
 
-// Helper function to display goal text
 function getGoalText(goalNumber) {
     const goals = {
         1: "losing 1 lb/week",

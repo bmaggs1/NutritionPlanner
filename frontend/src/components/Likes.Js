@@ -41,7 +41,6 @@ function Likes() {
             });
 
             if (res.ok) {
-                // Refresh the user data after unliking
                 fetchUserData();
             } else {
                 console.error("Failed to unlike recipe");

@@ -208,3 +208,14 @@ p {
 .settings-btn:active {
     transform: scale(0.97);
 }
+
+.recipe-img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.recipe-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}

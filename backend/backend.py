@@ -171,10 +171,14 @@ def generate_recipe():
     )
     
     URL = base_url + params
-    response = requests.get(URL)
+    
+    #comment if testing
+    #response = requests.get(URL)
+
     #uncomment if testing
-    #data = [{'id': 1697677, 'title': 'Super Easy Oven Baked Cod', 'image': 'https://img.spoonacular.com/recipes/1697677-312x231.jpg', 'imageType': 'jpg', 'calories': 718, 'protein': '47g', 'fat': '17g', 'carbs': '87g'}]
-    #return jsonify(data), 200
+    data = [{'id': 1697677, 'title': 'Super Easy Oven Baked Cod', 'image': 'https://img.spoonacular.com/recipes/1697677-312x231.jpg', 'imageType': 'jpg', 'calories': 718, 'protein': '47g', 'fat': '17g', 'carbs': '87g'}]
+    return jsonify(data), 200
+
     if response.status_code == 200:
         return jsonify(response.json()), 200
     
